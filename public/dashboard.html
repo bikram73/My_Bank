@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MyBank - Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Canvas Confetti Library for the animation -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>MyBank Dashboard</h1>
+        <p>Welcome back, valued customer.</p>
+        
+        <div id="balanceContainer" class="balance-display">
+            Your balance is: $<span id="amount"></span>
+        </div>
+
+        <button id="checkBalanceBtn">Check Balance</button>
+        <button onclick="logout()" class="btn-secondary">Logout</button>
+    </div>
+
+    <script>
+        document.getElementById('checkBalanceBtn').addEventListener('click', async () => {
+            const res = await fetch('/api/balance');
+            const data = await res.json();
+
+            if (res.ok) {
+                const balanceEl = document.getElementById('balanceContainer');
+                const amountEl = document.getElementById('amount');
+                
+                amountEl.innerText = parseFloat(data.balance).toLocaleString();
+                balanceEl.style.display = 'block';
+
+                // Trigger Party Popper Animation
+                confetti({
+                    particleCount: 150,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#004080', '#ffd700', '#ffffff'] // Bank colors
+                });
+            } else {
+                alert('Session expired or unauthorized. Please login again.');
+                window.location.href = 'index.html';
+            }
+        });
+
+        async function logout() {
+            await fetch('/api/logout', { method: 'POST' });
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
