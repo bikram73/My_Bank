@@ -169,6 +169,41 @@ button:active { transform: translateY(-1px); }
     20%, 40%, 60%, 80% { transform: translateX(5px); }
 }
 
+/* Footer Styles */
+.game-footer {
+    margin-top: 2rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+.github-link {
+    color: var(--text);
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+    margin-left: 5px;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.github-link:hover {
+    color: var(--primary);
+    transform: scale(1.1);
+}
+
+.glow-zoom-text {
+    display: inline-block;
+    color: var(--primary);
+    text-shadow: 0 0 5px var(--primary), 0 0 10px var(--primary);
+    animation: pulseZoom 1.5s infinite alternate;
+}
+
+@keyframes pulseZoom {
+    from { transform: scale(1); text-shadow: 0 0 5px var(--primary); }
+    to { transform: scale(1.15); text-shadow: 0 0 15px var(--primary), 0 0 25px var(--primary); }
+}
+
 @media (max-width: 480px) {
     .container {
         padding: 2.5rem;
