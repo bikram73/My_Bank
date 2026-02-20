@@ -1,4 +1,4 @@
-# 🏦 MyBank
+# 🏦 MyBank App
 
 MyBank is a backend banking application built with **Node.js**, **Express**, and **MySQL**. It provides a RESTful API for managing user accounts, processing transactions, and handling secure database operations.
 
