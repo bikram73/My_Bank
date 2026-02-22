@@ -74,6 +74,11 @@ Ensure you have the following installed on your machine:
 ### Vercel Postgres
 1. Add a storage resource in your Vercel project dashboard.
 2. Connect it to your project. Vercel will automatically add `POSTGRES_URL` to your environment variables.
+3. **To find the connection string manually:**
+   - Go to your Vercel Project > **Storage** tab.
+   - Select your database.
+   - Under **Connection Details** or **.env.local**, click **Show Secret**.
+   - Copy the `POSTGRES_URL` or `DATABASE_URL`.
 
 ### Local PostgreSQL
 1. Install PostgreSQL locally.

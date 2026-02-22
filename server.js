@@ -77,9 +77,13 @@ const initDB = () => {
 db.connect((err, client, release) => {
     if (err) {
         console.error("❌ Database Connection Error:", err.message);
-        console.error("👉 Hint: Ensure your local PostgreSQL is running and .env has DB_HOST=localhost");
+        if (connectionString) {
+            console.error("👉 Hint: Check your Cloud/Vercel Database URL.");
+        } else {
+            console.error("👉 Hint: Ensure your local PostgreSQL is running and .env has DB_HOST=localhost");
+        }
     } else {
-        console.log("✅ Database Connected Successfully");
+        console.log(`✅ Database Connected Successfully (${connectionString ? 'Cloud' : 'Local'})`);
         release();
         initDB();
     }
