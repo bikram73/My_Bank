@@ -55,7 +55,7 @@ h2 {
 label {
     display: block;
     margin-bottom: 8px;
-    color: #aaa;
+    color: #ffffff;
     font-size: 0.9rem;
 }
 
@@ -99,7 +99,7 @@ button:hover {
 p {
     text-align: center;
     margin-top: 20px;
-    color: #888;
+    color: #cccccc;
 }
 
 a {
