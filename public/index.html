@@ -2,13 +2,36 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0; url=login.html">
-    <title>Redirecting...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyBank - Home</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="rgb-card">
-        <p><b>Redirecting to MyBank Login...</b></p>
+    <div class="rgb-card" style="max-width: 600px; text-align: center;">
+        <h1>🏦 Welcome to MyBank</h1>
+        <p>
+            MyBank is a secure, modern banking application built with 
+            <b>Node.js</b>, <b>Express</b>, and <b>PostgreSQL</b>.
+        </p>
+        
+        <div style="text-align: left; margin: 20px 0; padding: 0 20px;">
+            <h3 style="color: #fff;">🚀 Key Features:</h3>
+            <ul style="color: #ccc; line-height: 1.6;">
+                <li>💼 <b>Account Management:</b> Create and manage your unique bank account.</li>
+                <li>💸 <b>Secure Transactions:</b> Real-time balance updates.</li>
+                <li>🔒 <b>Advanced Security:</b> Powered by BCrypt encryption and JWT.</li>
+                <li>☁️ <b>Cloud Ready:</b> Optimized for Vercel and Neon Database.</li>
+            </ul>
+        </div>
+
+        <div style="display: flex; gap: 15px; margin-top: 30px;">
+            <a href="login.html" style="width: 100%; text-decoration: none;">
+                <button>Login</button>
+            </a>
+            <a href="register.html" style="width: 100%; text-decoration: none;">
+                <button style="background: linear-gradient(90deg, #ff00cc, #333399);">Sign Up</button>
+            </a>
+        </div>
     </div>
 </body>
 </html>
