@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MyBank - Dashboard</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 <body>
     <div class="rgb-card dashboard-container">
@@ -31,7 +32,8 @@
 
         <div class="balance-display">
             <div style="color: #aaa; margin-bottom: 5px;">Current Balance</div>
-            <div class="balance-amount" id="balance">$0.00</div>
+            <button id="checkBalanceBtn" style="width: auto; padding: 8px 20px; background: linear-gradient(90deg, #00c6ff, #0072ff); margin-top: 10px;">Check Balance</button>
+            <div class="balance-amount" id="balance" style="display: none;">$0.00</div>
         </div>
 
         <div style="display: flex; gap: 10px; flex-direction: column;">
@@ -76,6 +78,27 @@
             await fetch('/api/logout', { method: 'POST' });
             window.location.href = '/login.html';
         }
+
+        document.getElementById('checkBalanceBtn').addEventListener('click', () => {
+            const btn = document.getElementById('checkBalanceBtn');
+            const balanceDiv = document.getElementById('balance');
+            
+            btn.style.display = 'none';
+            balanceDiv.style.display = 'block';
+
+            // Party Popper Effect (3 seconds)
+            const duration = 3000;
+            const end = Date.now() + duration;
+
+            (function frame() {
+                confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 } });
+                confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 } });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        });
 
         loadDashboard();
     </script>
