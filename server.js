@@ -17,9 +17,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Database Connection (PostgreSQL)
+const connectionString = process.env.POSTGRES_URL || process.env.DATABASE_URL;
+
 const db = new Pool({
-    connectionString: process.env.POSTGRES_URL,
-    ...(process.env.POSTGRES_URL ? {
+    connectionString: connectionString,
+    ...(connectionString ? {
         ssl: { rejectUnauthorized: false } // Force SSL for Vercel/Cloud
     } : {
         host: process.env.DB_HOST,
