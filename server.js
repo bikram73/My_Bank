@@ -187,6 +187,36 @@ app.get('/api/balance', (req, res) => {
     });
 });
 
+// 5. Change Password
+app.post('/api/change-password', (req, res) => {
+    const token = req.cookies.auth_token;
+    if (!token) return res.status(401).json({ error: 'Unauthorized' });
+
+    const { newPassword } = req.body;
+
+    // Validation
+    if (!newPassword || newPassword.length < 10) {
+        return res.status(400).json({ error: 'Password must be at least 10 characters.' });
+    }
+
+    // Verify Token
+    jwt.verify(token, JWT_SECRET, async (err, decoded) => {
+        if (err) return res.status(403).json({ error: 'Invalid Token' });
+
+        try {
+            const hashedPassword = await bcrypt.hash(newPassword, 10);
+            const username = decoded.username;
+
+            db.query('UPDATE mybank SET password = $1 WHERE username = $2', [hashedPassword, username], (dbErr, result) => {
+                if (dbErr) return res.status(500).json({ error: 'Database error' });
+                res.json({ message: 'Password updated successfully' });
+            });
+        } catch (e) {
+            res.status(500).json({ error: 'Server error' });
+        }
+    });
+});
+
 // Logout
 app.post('/api/logout', (req, res) => {
     res.clearCookie('auth_token');
