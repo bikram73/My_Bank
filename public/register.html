@@ -9,6 +9,9 @@
 <body>
     <div class="rgb-card">
         <h2>📝 Create Account</h2>
+        <div style="margin-bottom: 20px; font-size: 0.9em; color: #ffffff; text-align: center;">
+            Your Account ID: <span id="nextUid" style="color: #00ffd5; font-weight: bold;">Loading...</span>
+        </div>
         <form id="registerForm">
             <label for="username">Full Name</label>
             <input type="text" id="username" name="username" placeholder="John Doe" required>
@@ -21,10 +24,6 @@
 
             <label for="password">Password</label>
             <input type="password" id="password" name="password" placeholder="Min 10 characters" minlength="10" required>
-
-            <div style="margin-bottom: 20px; font-size: 0.9em; color: #ffffff;">
-                Your Account ID: <span id="nextUid" style="color: #00ffd5;">Loading...</span>
-            </div>
 
             <button type="submit">Register Now</button>
         </form>
