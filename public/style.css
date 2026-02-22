@@ -1,0 +1,154 @@
+/* Global Banking Theme */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #0f0f12;
+    background-image: radial-gradient(circle at 50% 50%, #1a1f2e 0%, #0f0f12 100%);
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* RGB Border Container */
+.rgb-card {
+    position: relative;
+    background: #161618;
+    border-radius: 16px;
+    padding: 40px;
+    width: 100%;
+    max-width: 400px;
+    z-index: 1;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+/* The Glowing RGB Effect */
+.rgb-card::before {
+    content: '';
+    position: absolute;
+    top: -3px; left: -3px; right: -3px; bottom: -3px;
+    background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+    background-size: 400%;
+    z-index: -1;
+    filter: blur(8px);
+    animation: glowing 20s linear infinite;
+    border-radius: 18px;
+}
+
+@keyframes glowing {
+    0% { background-position: 0 0; }
+    50% { background-position: 400% 0; }
+    100% { background-position: 0 0; }
+}
+
+/* Typography */
+h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: #fff;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #aaa;
+    font-size: 0.9rem;
+}
+
+/* Inputs */
+input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    background: #25252b;
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: #fff;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+}
+
+input:focus {
+    outline: none;
+    border-color: #00ffd5;
+}
+
+/* Buttons */
+button {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(90deg, #00c6ff, #0072ff);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 114, 255, 0.4);
+}
+
+/* Links */
+p {
+    text-align: center;
+    margin-top: 20px;
+    color: #888;
+}
+
+a {
+    color: #00c6ff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Dashboard Specific */
+.dashboard-container {
+    max-width: 600px;
+}
+
+.balance-display {
+    text-align: center;
+    margin: 30px 0;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.balance-amount {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #48ff00;
+    text-shadow: 0 0 10px rgba(72, 255, 0, 0.3);
+}
+
+.user-details {
+    background: #1f1f24;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #333;
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-label { color: #888; }
+.detail-value { color: #fff; font-weight: 500; }

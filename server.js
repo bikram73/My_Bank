@@ -17,7 +17,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Database Connection (PostgreSQL)
-const connectionString = process.env.POSTGRES_URL || process.env.DATABASE_URL;
+const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_URL;
 
 const db = new Pool({
     connectionString: connectionString,
@@ -122,7 +122,7 @@ app.post('/api/register', async (req, res) => {
                 if (err.code === '23505') return res.status(400).json({ error: 'Email already exists.' }); // 23505 is Postgres unique violation
                 return res.status(500).json({ error: 'Database error during registration.' });
             }
-            res.json({ message: 'Registration successful', redirect: '/index.html' });
+            res.json({ message: 'Registration successful', redirect: '/login.html' });
         });
     } catch (e) {
         res.status(500).json({ error: 'Server error' });
@@ -178,11 +178,11 @@ app.get('/api/balance', (req, res) => {
         const username = decoded.username;
 
         // Fetch Balance using Username
-        db.query('SELECT balance FROM mybank WHERE username = $1', [username], (dbErr, results) => {
+        db.query('SELECT uid, username, email, phone, balance FROM mybank WHERE username = $1', [username], (dbErr, results) => {
             if (dbErr) return res.status(500).json({ error: 'Database error' });
             if (results.rows.length === 0) return res.status(404).json({ error: 'User not found' });
 
-            res.json({ balance: results.rows[0].balance });
+            res.json(results.rows[0]);
         });
     });
 });
@@ -190,7 +190,7 @@ app.get('/api/balance', (req, res) => {
 // Logout
 app.post('/api/logout', (req, res) => {
     res.clearCookie('auth_token');
-    res.json({ message: 'Logged out', redirect: '/index.html' });
+    res.json({ message: 'Logged out', redirect: '/login.html' });
 });
 
 // Export the app for Vercel
