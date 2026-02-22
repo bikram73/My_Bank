@@ -1,6 +1,6 @@
 require('dotenv').config();
 const express = require('express');
-const mysql = require('mysql2');
+const { Pool } = require('pg');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
@@ -16,17 +16,19 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Database Connection (Aiven Credentials)
-const db = mysql.createPool({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 27004,
-    ssl: { rejectUnauthorized: false }, // Changed to false to fix connection issues
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
+// Database Connection (PostgreSQL)
+const db = new Pool({
+    connectionString: process.env.POSTGRES_URL,
+    ...(process.env.POSTGRES_URL ? {
+        ssl: { rejectUnauthorized: false } // Force SSL for Vercel/Cloud
+    } : {
+        host: process.env.DB_HOST,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME,
+        port: process.env.DB_PORT,
+        ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false
+    })
 });
 
 // Prevent App Crash on DB Connection Errors
@@ -38,7 +40,7 @@ db.on('error', (err) => {
 const initDB = () => {
     const userTable = `
         CREATE TABLE IF NOT EXISTS mybank (
-            uid INT AUTO_INCREMENT PRIMARY KEY,
+            uid SERIAL PRIMARY KEY,
             username VARCHAR(255) NOT NULL,
             email VARCHAR(255) NOT NULL UNIQUE,
             password VARCHAR(255) NOT NULL,
@@ -50,10 +52,10 @@ const initDB = () => {
 
     const tokenTable = `
         CREATE TABLE IF NOT EXISTS usertoken (
-            tid INT AUTO_INCREMENT PRIMARY KEY,
+            tid SERIAL PRIMARY KEY,
             token TEXT NOT NULL,
             uid INT,
-            expiry DATETIME,
+            expiry TIMESTAMP,
             FOREIGN KEY (uid) REFERENCES mybank(uid) ON DELETE CASCADE
         )
     `;
@@ -69,15 +71,25 @@ const initDB = () => {
     });
 };
 
-initDB();
+// Check connection before initializing
+db.connect((err, client, release) => {
+    if (err) {
+        console.error("❌ Database Connection Error:", err.message);
+        console.error("👉 Hint: Ensure your local PostgreSQL is running and .env has DB_HOST=localhost");
+    } else {
+        console.log("✅ Database Connected Successfully");
+        release();
+        initDB();
+    }
+});
 
 // --- Routes ---
 
 // 1. Get Next UID (For Registration Display)
 app.get('/api/next-uid', (req, res) => {
-    db.query('SELECT MAX(uid) as maxId FROM mybank', (err, results) => {
+    db.query('SELECT MAX(uid) as max_id FROM mybank', (err, results) => {
         if (err) return res.status(500).json({ error: 'DB Error' });
-        const nextId = (results[0].maxId || 0) + 1;
+        const nextId = (results.rows[0].max_id || 0) + 1;
         res.json({ nextUid: nextId });
     });
 });
@@ -96,12 +108,12 @@ app.post('/api/register', async (req, res) => {
         // Random balance between 100,000 and 1,000,000
         const initialBalance = Math.floor(Math.random() * 900000) + 100000;
 
-        const sql = `INSERT INTO mybank (username, email, password, balance, phone, role) VALUES (?, ?, ?, ?, ?, 'Customer')`;
+        const sql = `INSERT INTO mybank (username, email, password, balance, phone, role) VALUES ($1, $2, $3, $4, $5, 'Customer')`;
         
         db.query(sql, [username, email, hashedPassword, initialBalance, phone], (err, result) => {
             if (err) {
                 console.error("Registration DB Error:", err); // Log the actual error
-                if (err.code === 'ER_DUP_ENTRY') return res.status(400).json({ error: 'Email already exists.' });
+                if (err.code === '23505') return res.status(400).json({ error: 'Email already exists.' }); // 23505 is Postgres unique violation
                 return res.status(500).json({ error: 'Database error during registration.' });
             }
             res.json({ message: 'Registration successful', redirect: '/index.html' });
@@ -115,12 +127,12 @@ app.post('/api/register', async (req, res) => {
 app.post('/api/login', (req, res) => {
     const { email, password } = req.body;
 
-    const sql = 'SELECT * FROM mybank WHERE email = ?';
+    const sql = 'SELECT * FROM mybank WHERE email = $1';
     db.query(sql, [email], async (err, results) => {
         if (err) return res.status(500).json({ error: 'Database error' });
-        if (results.length === 0) return res.status(401).json({ error: 'Invalid email or password' });
+        if (results.rows.length === 0) return res.status(401).json({ error: 'Invalid email or password' });
 
-        const user = results[0];
+        const user = results.rows[0];
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) return res.status(401).json({ error: 'Invalid email or password' });
@@ -136,7 +148,7 @@ app.post('/api/login', (req, res) => {
         const expiryDate = new Date();
         expiryDate.setHours(expiryDate.getHours() + 1);
         
-        const tokenSql = 'INSERT INTO usertoken (token, uid, expiry) VALUES (?, ?, ?)';
+        const tokenSql = 'INSERT INTO usertoken (token, uid, expiry) VALUES ($1, $2, $3)';
         db.query(tokenSql, [token, user.uid, expiryDate], (tokenErr) => {
             if (tokenErr) console.error("Error storing token:", tokenErr);
             
@@ -160,11 +172,11 @@ app.get('/api/balance', (req, res) => {
         const username = decoded.username;
 
         // Fetch Balance using Username
-        db.query('SELECT balance FROM mybank WHERE username = ?', [username], (dbErr, results) => {
+        db.query('SELECT balance FROM mybank WHERE username = $1', [username], (dbErr, results) => {
             if (dbErr) return res.status(500).json({ error: 'Database error' });
-            if (results.length === 0) return res.status(404).json({ error: 'User not found' });
+            if (results.rows.length === 0) return res.status(404).json({ error: 'User not found' });
 
-            res.json({ balance: results[0].balance });
+            res.json({ balance: results.rows[0].balance });
         });
     });
 });
