@@ -64,7 +64,10 @@
     <div id="passwordModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 1000;">
         <div class="rgb-card" style="max-width: 350px; text-align: center;">
             <h3>🔐 Change Password</h3>
-            <input type="password" id="newPasswordInput" placeholder="New Password (min 10 chars)" style="margin-top: 10px;">
+            <div style="position: relative; margin-top: 10px;">
+                <input type="password" id="newPasswordInput" placeholder="New Password (min 10 chars)" style="width: 100%; padding-right: 40px;">
+                <span id="toggleNewPasswordIcon" onclick="toggleNewPassword()" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 1.2rem; z-index: 10; display: flex; align-items: center;">👁️</span>
+            </div>
             <div style="display: flex; gap: 10px; margin-top: 20px;">
                 <button onclick="changePassword()">Update</button>
                 <button onclick="closePasswordModal()" style="background: #333;">Cancel</button>
@@ -210,6 +213,18 @@
                 closePhoneModal();
             } else {
                 alert(data.error);
+            }
+        }
+
+        function toggleNewPassword() {
+            const passwordInput = document.getElementById('newPasswordInput');
+            const icon = document.getElementById('toggleNewPasswordIcon');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.innerText = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                icon.innerText = '👁️';
             }
         }
 
