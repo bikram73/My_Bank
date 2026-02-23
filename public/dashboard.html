@@ -72,6 +72,30 @@
         </div>
     </div>
 
+    <!-- RGB Name Change Modal -->
+    <div id="nameModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 1000;">
+        <div class="rgb-card" style="max-width: 350px; text-align: center;">
+            <h3>📝 Change Name</h3>
+            <input type="text" id="newNameInput" placeholder="New Account Name" style="margin-top: 10px;">
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button onclick="submitNameChange()">Update</button>
+                <button onclick="closeNameModal()" style="background: #333;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- RGB Phone Change Modal -->
+    <div id="phoneModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 1000;">
+        <div class="rgb-card" style="max-width: 350px; text-align: center;">
+            <h3>📱 Change Phone</h3>
+            <input type="tel" id="newPhoneInput" placeholder="New Phone Number" style="margin-top: 10px;">
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button onclick="submitPhoneChange()">Update</button>
+                <button onclick="closePhoneModal()" style="background: #333;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         async function loadDashboard() {
             try {
@@ -134,16 +158,36 @@
         }
 
         function changeName() {
-            const newName = prompt("Enter new Account Name:");
+            document.getElementById('nameModal').style.display = 'flex';
+        }
+
+        function closeNameModal() {
+            document.getElementById('nameModal').style.display = 'none';
+            document.getElementById('newNameInput').value = '';
+        }
+
+        function submitNameChange() {
+            const newName = document.getElementById('newNameInput').value;
             if (newName) {
                 document.getElementById('userName').innerText = newName;
+                closeNameModal();
             }
         }
 
         function changePhone() {
-            const newPhone = prompt("Enter new Phone Number:");
+            document.getElementById('phoneModal').style.display = 'flex';
+        }
+
+        function closePhoneModal() {
+            document.getElementById('phoneModal').style.display = 'none';
+            document.getElementById('newPhoneInput').value = '';
+        }
+
+        function submitPhoneChange() {
+            const newPhone = document.getElementById('newPhoneInput').value;
             if (newPhone) {
                 document.getElementById('userPhone').innerText = newPhone;
+                closePhoneModal();
             }
         }
 
