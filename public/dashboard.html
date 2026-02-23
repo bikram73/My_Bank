@@ -166,11 +166,22 @@
             document.getElementById('newNameInput').value = '';
         }
 
-        function submitNameChange() {
+        async function submitNameChange() {
             const newName = document.getElementById('newNameInput').value;
-            if (newName) {
+            if (!newName) return;
+
+            const response = await fetch('/api/change-name', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ newName })
+            });
+            const data = await response.json();
+            if (response.ok) {
                 document.getElementById('userName').innerText = newName;
+                alert(data.message);
                 closeNameModal();
+            } else {
+                alert(data.error);
             }
         }
 
@@ -183,11 +194,22 @@
             document.getElementById('newPhoneInput').value = '';
         }
 
-        function submitPhoneChange() {
+        async function submitPhoneChange() {
             const newPhone = document.getElementById('newPhoneInput').value;
-            if (newPhone) {
+            if (!newPhone) return;
+
+            const response = await fetch('/api/change-phone', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ newPhone })
+            });
+            const data = await response.json();
+            if (response.ok) {
                 document.getElementById('userPhone').innerText = newPhone;
+                alert(data.message);
                 closePhoneModal();
+            } else {
+                alert(data.error);
             }
         }
 

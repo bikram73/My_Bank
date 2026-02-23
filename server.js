@@ -217,6 +217,57 @@ app.post('/api/change-password', (req, res) => {
     });
 });
 
+// 6. Change Name
+app.post('/api/change-name', (req, res) => {
+    const token = req.cookies.auth_token;
+    if (!token) return res.status(401).json({ error: 'Unauthorized' });
+
+    const { newName } = req.body;
+    if (!newName || newName.trim().length === 0) {
+        return res.status(400).json({ error: 'Name cannot be empty.' });
+    }
+
+    jwt.verify(token, JWT_SECRET, (err, decoded) => {
+        if (err) return res.status(403).json({ error: 'Invalid Token' });
+
+        const currentUsername = decoded.username;
+
+        // Update username in DB
+        const sql = 'UPDATE mybank SET username = $1 WHERE username = $2 RETURNING uid, role';
+        db.query(sql, [newName, currentUsername], (dbErr, result) => {
+            if (dbErr) return res.status(500).json({ error: 'Database error' });
+            if (result.rowCount === 0) return res.status(404).json({ error: 'User not found' });
+
+            const user = result.rows[0];
+
+            // Issue new token with updated username so session remains valid
+            const newToken = jwt.sign({ username: newName, role: user.role }, JWT_SECRET, { expiresIn: '1h' });
+            res.cookie('auth_token', newToken, { httpOnly: true, maxAge: 3600000 });
+            
+            res.json({ message: 'Name updated successfully' });
+        });
+    });
+});
+
+// 7. Change Phone
+app.post('/api/change-phone', (req, res) => {
+    const token = req.cookies.auth_token;
+    if (!token) return res.status(401).json({ error: 'Unauthorized' });
+
+    const { newPhone } = req.body;
+    if (!newPhone) return res.status(400).json({ error: 'Phone cannot be empty.' });
+
+    jwt.verify(token, JWT_SECRET, (err, decoded) => {
+        if (err) return res.status(403).json({ error: 'Invalid Token' });
+        const username = decoded.username;
+        
+        db.query('UPDATE mybank SET phone = $1 WHERE username = $2', [newPhone, username], (dbErr) => {
+            if (dbErr) return res.status(500).json({ error: 'Database error' });
+            res.json({ message: 'Phone updated successfully' });
+        });
+    });
+});
+
 // Logout
 app.post('/api/logout', (req, res) => {
     res.clearCookie('auth_token');
