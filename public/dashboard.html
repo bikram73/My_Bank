@@ -23,7 +23,10 @@
         <div class="user-details">
             <div class="detail-row">
                 <span class="detail-label">📝 Account Name</span>
-                <span class="detail-value" id="userName">Loading...</span>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span class="detail-value" id="userName">Loading...</span>
+                    <button onclick="changeName()" style="padding: 4px 10px; font-size: 0.8rem; width: auto; background: linear-gradient(90deg, #ff00cc, #333399);">Change</button>
+                </div>
             </div>
             <div class="detail-row">
                 <span class="detail-label">🪪 Account ID</span>
@@ -42,7 +45,10 @@
             </div>
             <div class="detail-row">
                 <span class="detail-label">📱 Phone No (PNO)</span>
-                <span class="detail-value" id="userPhone">...</span>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span class="detail-value" id="userPhone">...</span>
+                    <button onclick="changePhone()" style="padding: 4px 10px; font-size: 0.8rem; width: auto; background: linear-gradient(90deg, #ff00cc, #333399);">Change</button>
+                </div>
             </div>
         </div>
 
@@ -124,6 +130,20 @@
                 closePasswordModal();
             } else {
                 alert(data.error);
+            }
+        }
+
+        function changeName() {
+            const newName = prompt("Enter new Account Name:");
+            if (newName) {
+                document.getElementById('userName').innerText = newName;
+            }
+        }
+
+        function changePhone() {
+            const newPhone = prompt("Enter new Phone Number:");
+            if (newPhone) {
+                document.getElementById('userPhone').innerText = newPhone;
             }
         }
 
