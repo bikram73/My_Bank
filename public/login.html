@@ -16,6 +16,10 @@
             <label for="password"><b>🔑Password</b></label>
             <input type="password" id="password" name="password" placeholder="Enter your password" required>
 
+            <div style="text-align: right; margin-bottom: 15px;">
+                <a href="#" onclick="openForgotModal()" style="color: #00c6ff; text-decoration: none; font-size: 0.9rem;">Forgot Password?</a>
+            </div>
+
             <button type="submit">Secure Login</button>
         </form>
         <p><b>New to MyBank? </b><a href="register.html"><b>Create an Account</b></a></p>
@@ -27,6 +31,19 @@
             <h3 style="color: #ff0055;"><b>❌ Login Failed</b></h3>
             <p id="errorMessage" style="margin-top: 15px; color: #fff; font-size: 1rem;">...</p>
             <button onclick="closeErrorModal()" style="margin-top: 20px; background: linear-gradient(90deg, #ff0055, #ff5500); width: 100%;">Try Again</button>
+        </div>
+    </div>
+
+    <!-- RGB Forgot Password Modal -->
+    <div id="forgotModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 1000;">
+        <div class="rgb-card" style="max-width: 350px; text-align: center;">
+            <h3>🔐 Reset Password</h3>
+            <p style="color: #ddd; font-size: 0.9rem; margin: 10px 0;">Enter your email to receive a reset link.</p>
+            <input type="email" id="resetEmail" placeholder="Enter your email" style="margin-top: 10px;">
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button onclick="submitReset()">Send Link</button>
+                <button onclick="closeForgotModal()" style="background: #333;">Cancel</button>
+            </div>
         </div>
     </div>
 
@@ -61,6 +78,23 @@
 
         function closeErrorModal() {
             document.getElementById('errorModal').style.display = 'none';
+        }
+
+        function openForgotModal() {
+            document.getElementById('forgotModal').style.display = 'flex';
+        }
+
+        function closeForgotModal() {
+            document.getElementById('forgotModal').style.display = 'none';
+            document.getElementById('resetEmail').value = '';
+        }
+
+        function submitReset() {
+            const email = document.getElementById('resetEmail').value;
+            if (email) {
+                alert('If an account exists for ' + email + ', a reset link has been sent.');
+                closeForgotModal();
+            }
         }
     </script>
 </body>
